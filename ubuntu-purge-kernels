@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# purpose: purge all kernels installed on the current system *except*
+#          the one and use and the latest or last
+
+listcandidates() {
+    dpkg --get-selections | awk '$2=="install" && /linux-image-[0-9]/{print $1}' | grep -v `uname -r` | head -n -1
+}
+
+candidates=`listcandidates`
+
+if [ -n "$candidates" ] ; then
+    apt-get -y remove $candidates && apt-get -y autoremove
+fi
